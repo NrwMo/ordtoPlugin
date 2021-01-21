@@ -1,0 +1,52 @@
+table {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-size: 14px;
+    background: white;
+    max-width: 70%;
+    width: 70%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.ords_info{
+    font-size: 13px;
+    background: white;
+    max-width: 70%;
+    width: 70%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.order_number{
+    border: 0px;
+    background: white;
+    color: #039;
+}
+.input_prod{
+    width: 50%;
+    border-color: #0A246A;
+}
+h2{
+    font-size: 20px;
+    color: #253980;
+}
+h3{
+    font-size: 16px;
+    color: #253980;
+}
+th {
+    font-weight: normal;
+    color: #039;
+    border-bottom: 2px solid #6678b1;
+    padding: 10px 8px;
+}
+td {
+    color: #669;
+    padding: 9px 8px;
+    transition: .3s linear;
+}
+tr:hover td {
+    color: #00A8EF;
+}
+.order_number:hover{
+    color: #3b0202;
+    text-decoration: underline;
+}

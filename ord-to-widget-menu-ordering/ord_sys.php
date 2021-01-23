@@ -10,16 +10,25 @@
  * Domain Path:       /lang
  */
 
+if(!defined('ABSPATH')){
+    die;
+}
+
 require_once __DIR__ . '/includes/ords.php';
 require_once __DIR__ . '/includes/items_view.php';
 require_once __DIR__ . '/includes/prods.php';
 require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/menu_view.php';
 require_once __DIR__ . '/includes/menu_or_widget.php';
 
 function ortdo_register_assets()
 {
-    wp_register_style('ordto_styles', plugins_url('admin/css/main.css', __FILE__));
+    wp_register_style('ordto_style', plugins_url('admin/css/main.css', __FILE__));
+}
+
+function ortdo_enqueue_css_button()
+{
+    wp_register_style('ordto_style_button', plugins_url('admin/css/button.css', __FILE__));
+    wp_enqueue_style('ordto_style_button');
 }
 
 function ordto_enqueue_assets($hook)
@@ -27,7 +36,7 @@ function ordto_enqueue_assets($hook)
     if ($hook != ('toplevel_page_orders' || 'toplevel_page_products')) {
         return;
     }
-    wp_enqueue_style('ordto_styles');
+    wp_enqueue_style('ordto_style');
 }
 
 function ordto_show_new_items()
@@ -73,6 +82,8 @@ function ordto_show_new_items()
     }
 }
 
+
+
 if (is_admin()) {
     add_action('admin_enqueue_scripts', 'ortdo_register_assets');
     add_action('admin_enqueue_scripts', 'ordto_enqueue_assets');
@@ -80,5 +91,6 @@ if (is_admin()) {
 }
 
 if (!is_admin()) {
-    ordto_select_view_mode();
+    add_action('wp_footer','ortdo_enqueue_css_button');
+    ordto_view_public();
 }

@@ -39,7 +39,7 @@ function ordto_config_view()
 
         if (!empty($_POST['api_key']) && !empty($_POST['widget_code']) && !empty($_POST['url_site'])) {
 
-            file_put_contents(__DIR__ . '/api_key.yaml', stripslashes($_POST['api_key']));
+            file_put_contents(__DIR__ . '/api_key.txt', stripslashes($_POST['api_key']));
             file_put_contents(__DIR__ . '/widget_code.php', stripslashes($_POST['widget_code']));
             file_put_contents(__DIR__ . '/url_site.txt', stripslashes($_POST['url_site'])); //+full screen tumbler
             file_put_contents(__DIR__ . '/wm.txt', stripslashes($_POST['menu/widget']));
@@ -53,7 +53,7 @@ function ordto_config_view()
 
         } elseif (!empty($_POST['api_key']) && empty($_POST['widget_code']) && empty($_POST['url_site'])) {
 
-            file_put_contents(__DIR__ . '/api_key.yaml', stripslashes($_POST['api_key']));
+            file_put_contents(__DIR__ . '/api_key.txt', stripslashes($_POST['api_key']));
             echo "<br>API key changed successfully!";
 
         } else {

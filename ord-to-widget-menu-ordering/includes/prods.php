@@ -1,10 +1,10 @@
 <?php
 function ordto_products_view()
 {
-    if (file_exists(__DIR__ . '/api_key.yaml')) {
-        if (!empty(file_get_contents(__DIR__ . '/api_key.yaml'))) {
+    if (file_exists(__DIR__ . '/api_key.txt')) {
+        if (!empty(file_get_contents(__DIR__ . '/api_key.txt'))) {
 
-            $api_key = file_get_contents(__DIR__ . '/api_key.yaml');
+            $api_key = file_get_contents(__DIR__ . '/api_key.txt');
             $json_products_res = file_get_contents('https://cloud.ord.to/api/v1/product/list?apiKey=' . $api_key);
             $products = json_decode($json_products_res, true);
 
@@ -60,7 +60,7 @@ function ordto_add_product()
                 "description" => $_POST['product_description'],
                 "price" => $_POST['product_price']];
 
-            $api_key = file_get_contents(__DIR__ . '/api_key.yaml');
+            $api_key = file_get_contents(__DIR__ . '/api_key.txt');
             $json_new_product = json_encode($new_product);
 
             $ch = curl_init('https://cloud.ord.to/api/v1/product/add?apiKey=' . $api_key);
@@ -78,7 +78,7 @@ function ordto_add_product()
 
 function ordto_products_list_arr()
 {
-    $api_key = file_get_contents(__DIR__ . '/api_key.yaml');
+    $api_key = file_get_contents(__DIR__ . '/api_key.txt');
     $json_products_res = file_get_contents('https://cloud.ord.to/api/v1/product/list?apiKey=' . $api_key);
     $products = json_decode($json_products_res, true);
 

@@ -2,9 +2,9 @@
 
 function ordto_orders_view()
 {
-    if (file_exists(__DIR__ . '/api_key.yaml')) {
-        if (!empty(file_get_contents(__DIR__ . '/api_key.yaml'))) {
-            $api_key = file_get_contents(__DIR__ . '/api_key.yaml');
+    if (file_exists(__DIR__ . '/api_key.txt')) {
+        if (!empty(file_get_contents(__DIR__ . '/api_key.txt'))) {
+            $api_key = file_get_contents(__DIR__ . '/api_key.txt');
             $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
             $orders_list = json_decode($json_orders_list, true);
 
@@ -158,7 +158,7 @@ function ordto_orders_view()
 
 function ordto_order_info_arr()
 {
-    $api_key = file_get_contents(__DIR__ . '/api_key.yaml');
+    $api_key = file_get_contents(__DIR__ . '/api_key.txt');
     $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
     $orders_list = json_decode($json_orders_list, true);
 
@@ -173,7 +173,7 @@ function ordto_order_info_arr()
 
 function ordto_orders_list_arr()
 {
-    $api_key = file_get_contents(__DIR__ . '/api_key.yaml');
+    $api_key = file_get_contents(__DIR__ . '/api_key.txt');
     $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
     $orders_list = json_decode($json_orders_list, true);
 

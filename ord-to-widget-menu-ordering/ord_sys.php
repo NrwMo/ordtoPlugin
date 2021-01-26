@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name:       Ordering System - ord.to
- * Description:       Widget or the menu on your site!
+ * Description:       Integrate menu to your website with ord.to!
  * Version:           1.1.0
  * Requires at least: 5.6
  * Requires PHP:      7.1
- * Author:            NrwMo
+ * Author:            Getreve Ltd
  * Text Domain:       ordto
  * Domain Path:       /lang
  */
@@ -23,12 +23,6 @@ require_once __DIR__ . '/includes/menu_or_widget.php';
 function ortdo_register_assets()
 {
     wp_register_style('ordto_style', plugins_url('admin/css/main.css', __FILE__));
-}
-
-function ortdo_enqueue_css_button()
-{
-    wp_register_style('ordto_style_button', plugins_url('admin/css/button.css', __FILE__));
-    wp_enqueue_style('ordto_style_button');
 }
 
 function ordto_enqueue_assets($hook)
@@ -82,8 +76,6 @@ function ordto_show_new_items()
     }
 }
 
-
-
 if (is_admin()) {
     add_action('admin_enqueue_scripts', 'ortdo_register_assets');
     add_action('admin_enqueue_scripts', 'ordto_enqueue_assets');
@@ -91,6 +83,5 @@ if (is_admin()) {
 }
 
 if (!is_admin()) {
-    add_action('wp_footer','ortdo_enqueue_css_button');
     ordto_view_public();
 }

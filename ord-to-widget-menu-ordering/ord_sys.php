@@ -10,7 +10,7 @@
  * Domain Path:       /lang
  */
 
-if(!defined('ABSPATH')){
+if (!defined('ABSPATH')) {
     die;
 }
 
@@ -79,7 +79,7 @@ function ordto_show_new_items()
 if (is_admin()) {
     add_action('admin_enqueue_scripts', 'ortdo_register_assets');
     add_action('admin_enqueue_scripts', 'ordto_enqueue_assets');
-    add_action('admin_menu','ordto_show_new_items');
+    add_action('admin_menu', 'ordto_show_new_items');
 }
 
 if (!is_admin()) {

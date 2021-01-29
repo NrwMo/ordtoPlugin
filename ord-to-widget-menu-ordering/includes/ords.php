@@ -4,6 +4,9 @@ function ordto_orders_view()
 {
     if (file_exists(__DIR__ . '/api_key.txt')) {
         if (!empty(file_get_contents(__DIR__ . '/api_key.txt'))) {
+
+            ordto_save_order_status();
+
             $api_key = file_get_contents(__DIR__ . '/api_key.txt');
             $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
             $orders_list = json_decode($json_orders_list, true);
@@ -29,56 +32,100 @@ function ordto_orders_view()
                 8 => "Card n delivery",
                 9 => "P24",
                 10 => "Status square"];
-            ?>
-
-            <h2>Orders on your site:</h2>
-            <table>
-                <tr>
-                    <th>No</th>
-                    <th>Delivery date</th>
-                    <th>Value</th>
-                    <th>Status</th>
-                    <th>Type</th>
-                    <th>Payment status</th>
-                </tr>
-                <?php
-
-                for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
-
-                    $json_order_info = file_get_contents('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '?apiKey=' . $api_key);
-                    $order_info = json_decode($json_order_info, true);
-
-                    ?>
+            if (empty($_POST['order_id']) || !empty($_POST['come_back_to_orders'])) {
+                ?>
+                <h2>Orders on your site:</h2>
+                <table>
                     <tr>
-                        <td width="80">
-                            <form method="post"><input class="order_number" type="submit" name="order_id"
-                                                       value="<?php echo "#" . $order_info[data][number]; ?>">
-                            </form>
-                        </td>
-                        <td width="230"><?php $date = $orders_list[data][$i][order_date];
-                            echo date("F j, Y, g:i a", strtotime($date)); ?></td>
-                        <td width="100"> <?php echo $orders_list[data][$i][price] . " " . $orders_list[data][$i][currency][name]; ?></td>
-                        <td width="100"><?php echo $as_status[$orders_list[data][$i][status]]; ?></td>
-                        <td width="100"><?php for ($j = 0; $j <= count($order_type[data]); $j++) {
-                                if ($order_type[data][$j][id] == $order_info[data][type]) {
-                                    echo $order_type[data][$j][name];
-                                }
-                            } ?></td>
-                        <td width="200"><?php echo $as_payment_status[$order_info[data][payment_status]]; ?></td>
+                        <th>No</th>
+                        <th>Delivery date</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Payment status</th>
                     </tr>
                     <?php
-                }
-                ?>
-            </table>
-            <?php
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+                    for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
+
+                        $json_order_info = file_get_contents('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '?apiKey=' . $api_key);
+                        $order_info = json_decode($json_order_info, true);
+
+                        ?>
+                        <tr>
+                            <td width="80">
+                                <form method="post"><input class="order_number" type="submit" name="order_id"
+                                                           value="<?php echo "#" . $order_info[data][number]; ?>">
+                                </form>
+                            </td>
+                            <td width="230"><?php $date = $orders_list[data][$i][order_date];
+                                echo date("F j, Y, g:i a", strtotime($date)); ?></td>
+                            <td width="100"> <?php echo $orders_list[data][$i][price] . " " . $orders_list[data][$i][currency][name]; ?></td>
+                            <td width="100"><select name="sel<?php echo $i; ?>" form="order_status_change">
+                                    <option <?php if ($as_status[1] == $as_status[$orders_list[data][$i][status]]) {
+                                        ?>
+                                        selected
+                                        <?php
+                                    } ?> ><?php echo $as_status[1]; ?></option>
+                                    <option <?php if ($as_status[4] == $as_status[$orders_list[data][$i][status]]) {
+                                        ?>
+                                        selected
+                                        <?php
+                                    } ?> ><?php echo $as_status[4]; ?></option>
+                                    <option <?php if ($as_status[5] == $as_status[$orders_list[data][$i][status]]) {
+                                        ?>
+                                        selected
+                                        <?php
+                                    } ?> ><?php echo $as_status[5]; ?></option>
+                                    <option <?php if ($as_status[6] == $as_status[$orders_list[data][$i][status]]) {
+                                        ?>
+                                        selected
+                                        <?php
+                                    } ?> ><?php echo $as_status[6]; ?></option>
+                                    <option <?php if ($as_status[7] == $as_status[$orders_list[data][$i][status]]) {
+                                        ?>
+                                        selected
+                                        <?php
+                                    } ?> ><?php echo $as_status[7]; ?></option>
+                                    <option <?php if ($as_status[8] == $as_status[$orders_list[data][$i][status]]) {
+                                        ?>
+                                        selected
+                                        <?php
+                                    } ?> ><?php echo $as_status[8]; ?></option>
+                                    <option <?php if ($as_status[9] == $as_status[$orders_list[data][$i][status]]) {
+                                        ?>
+                                        selected
+                                        <?php
+                                    } ?> ><?php echo $as_status[9]; ?></option>
+                                </select></td>
+                            <td width="100"><?php for ($j = 0; $j <= count($order_type[data]); $j++) {
+                                    if ($order_type[data][$j][id] == $order_info[data][type]) {
+                                        echo $order_type[data][$j][name];
+                                    }
+                                } ?></td>
+                            <td width="200"><?php echo $as_payment_status[$order_info[data][payment_status]]; ?></td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </table>
+                <br>
+                <form id="order_status_change" method="post">
+                    <input type="submit" name="save_order_status" value="Save changes">
+                </form>
+                <?php
+            } elseif (!empty($_POST['order_id'])) {
                 for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
                     $json_order_info = file_get_contents('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '?apiKey=' . $api_key);
                     $order_info = json_decode($json_order_info, true);
 
                     if ("#{$order_info[data][number]}" == $_POST['order_id']) {
                         ?>
-                        <hr>
+                        <br>
+                        <form method="post">
+                            <input class="come_back_to_" type="submit" name="come_back_to_orders"
+                                   value="← come back to orders list">
+                        </form>
                         <h2>Order <?php echo $_POST['order_id']; ?></h2>
 
                         <h3>Client information:</h3>
@@ -151,10 +198,60 @@ function ordto_orders_view()
                     }
                 }
             }
-        } else echo 'Specify your API key in the Configuration tab!';
-    } else echo 'Specify your API key in the Configuration tab!';
+        } else {
+            ?>
+            <div id="new_user_banner"
+                 style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
+                Specify your API key in the Configuration tab!
+            </div>
+            <?php
+        }
+    } else {
+        ?>
+        <div id="new_user_banner"
+             style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
+            Specify your API key in the Configuration tab!
+        </div>
+        <?php
+    }
 }
 
+function ordto_save_order_status()
+{
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (!empty($_POST['save_order_status'])) {
+
+            $api_key = file_get_contents(__DIR__ . '/api_key.txt');
+            $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
+            $orders_list = json_decode($json_orders_list, true);
+
+            $as_status_convert = ["New" => 1,
+                "Rejected" => 4,
+                "Returned" => 5,
+                "To accept" => 6,
+                "Preparing" => 7,
+                "In delivery" => 8,
+                "Delivered" => 9];
+
+            for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
+                $new_order_status = ['orderStatus' => $as_status_convert[$_POST['sel' . $i]]];
+
+                $json_new_order_status = json_encode($new_order_status);
+
+                $ch = curl_init('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '/status?apiKey=' . $api_key);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $json_new_order_status);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen($json_new_order_status))
+                );
+                curl_exec($ch);
+            }
+
+        }
+    }
+}
 
 function ordto_order_info_arr()
 {

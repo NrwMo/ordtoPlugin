@@ -51,10 +51,11 @@ function ordto_view_frame()
                         <form method="post">
                             <button name="menu_but" type="submit" style="opacity: 0.5; background: #ffffff;">✖</button>
                         </form>
-                        
+
                     </div>
                     <div style="width: 100%; height: 100%;">
-                        <iframe style="width: 100%; height: 100%;" src="<?php echo file_get_contents(__DIR__ . '/url_site.txt'); ?>">
+                        <iframe style="width: 100%; height: 100%;"
+                                src="<?php echo file_get_contents(__DIR__ . '/url_site.txt'); ?>">
                         </iframe>
                     </div>
                 </div>

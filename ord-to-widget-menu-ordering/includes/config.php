@@ -12,13 +12,13 @@ function ordto_config_view()
         <?php
     }
     ?>
+    <div class="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #566d86; background-color: #deedf5; border-color: #d2e5ef;'>
+        Here you can change all your configuration settings at one time,
+        change your API key only,
+        change your site configuration only (widget script and site URL),
+        change view mode only (widget/menu)
+    </div>
     <form method='post'>
-        <p>Here you can:</p>
-        <p> - change all your configuration settings at one time</p>
-        <p> - change your API key only</p>
-        <p> - change your site configuration only (widget script and site URL)</p>
-        <p> - change view mode only (widget/menu)</p>
-        <hr>
         <label for="inp_api">
             <p> Input your API from ord.to -> Integrations -> API -> API key for this company:</p>
         </label>

@@ -39,6 +39,10 @@ function ordto_orders_view()
                 ?>
 
                 <div>
+                    <div class="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #566d86; background-color: #deedf5; border-color: #d2e5ef;'>
+                        Here you can view information about your existing orders,
+                        see details and change order status
+                    </div>
                     <div style="position: absolute; bottom: 37px; left: 150px">
                         <form method="post">
                             <?php echo $orders_list[count] ?> items
@@ -198,7 +202,7 @@ function ordto_orders_view()
                         <br>
                         <form method="post">
                             <input class="come_back_to_" type="submit" name="come_back_to_orders"
-                                   value="← come back to orders list">
+                                   value="← Back">
                         </form>
                         <h2>Order <?php echo $_POST['order_id']; ?></h2>
 

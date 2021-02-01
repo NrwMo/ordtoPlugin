@@ -55,7 +55,7 @@ function ordto_view_frame()
                     </div>
                     <div style="width: 100%; height: 100%;">
                         <iframe style="width: 100%; height: 100%;"
-                                src="<?php echo file_get_contents(__DIR__ . '/url_site.txt'); ?>">
+                                src="<?php echo file_get_contents(__DIR__ . '/url_site.txt') . '?hideheader=1'; ?>">
                         </iframe>
                     </div>
                 </div>

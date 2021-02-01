@@ -31,6 +31,10 @@ function ordto_products_view()
             if (empty($_POST['add_new_product']) || !empty($_POST['come_back_to_products_list'])) {
                 ?>
                 <div>
+                    <div class="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #566d86; background-color: #deedf5; border-color: #d2e5ef;'>
+                        Here you can view information about your products,
+                        change their sale statuses and add new ones
+                    </div>
                     <div style="position: absolute; bottom: 37px; left: 300px">
                         <form method="post">
                             <?php echo count($products_list_store); ?> items
@@ -99,6 +103,22 @@ function ordto_products_view()
                     ?>
 
                     <h2>Products on your site:</h2>
+                    <form method="post">
+                        <input style="display: inline-block;
+                            background-color: #1ab394;
+    border-color: #1ab394;
+    color: #FFFFFF;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;" class="btn" type="submit" name="add_new_product" value="Add product">
+                    </form>
+                    <br>
                     <table>
                         <tr style="text-align: left;">
                             <th>ON</th>
@@ -131,7 +151,6 @@ function ordto_products_view()
                     <div style="position: absolute; bottom: 40px;">
                         <form id="status_change" method="post">
                             <input type="submit" name="save_changes_in_products" value="Save changes">
-                            <input type="submit" name="add_new_product" value="Add new product">
                         </form>
                     </div>
                 </div>
@@ -172,7 +191,7 @@ function ordto_add_product()
     <br>
     <form method="post">
         <input class="come_back_to_" type="submit" name="come_back_to_products_list"
-               value="← come back to products list">
+               value="← Back">
     </form>
     <h2>Add product: </h2>
     <form enctype="multipart/form-data" method="post" class="prod_form">
@@ -191,7 +210,19 @@ function ordto_add_product()
         <input class="input_prod" type="file" name="product_photo[]" multiple accept="image/*"><br><br>
 
         <input type='reset' name='res2' value="Reset">
-        <input type='submit' name='sub2' value="Submit"><br><br>
+        <input style="display: inline-block;
+                            background-color: #1ab394;
+    border-color: #1ab394;
+    color: #FFFFFF;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;" type='submit' name='sub2' value="Add product"><br><br>
     </form>
     <?php
 }

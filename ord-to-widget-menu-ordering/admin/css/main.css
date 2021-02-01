@@ -1,3 +1,4 @@
+
 table {
     font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
     font-size: 14px;
@@ -69,7 +70,6 @@ td {
     padding: 9px 8px;
     transition: .3s linear;
 }
-
 tr:hover td {
     color: #00A8EF;
 }

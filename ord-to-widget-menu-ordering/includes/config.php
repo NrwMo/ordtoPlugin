@@ -4,7 +4,7 @@ function ordto_config_view()
     ordto_post_config();
     if(!file_exists(__DIR__ . '/api_key.txt')){
         ?>
-        <div id="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
+        <div class="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
             If you do not have an account at ord.to,
             then you can create one
             <a href="https://cloud.ord.to/register" target="_blank">here</a>
@@ -73,7 +73,7 @@ function ordto_post_config()
 
             file_put_contents(__DIR__ . '/api_key.txt', stripslashes($_POST['api_key']));
             file_put_contents(__DIR__ . '/widget_code.php', stripslashes($_POST['widget_code']));
-            file_put_contents(__DIR__ . '/url_site.txt', stripslashes($_POST['url_site'])); //+full screen tumbler
+            file_put_contents(__DIR__ . '/url_site.txt', stripslashes($_POST['url_site']));
             file_put_contents(__DIR__ . '/wm.txt', stripslashes($_POST['menu/widget']));
             echo "<h3>All configuration added successfully!</h3>";
 

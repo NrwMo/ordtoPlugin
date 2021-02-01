@@ -8,8 +8,10 @@ function ordto_orders_view()
             ordto_save_order_status();
 
             $api_key = file_get_contents(__DIR__ . '/api_key.txt');
-            $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
+            $json_orders_list = file_get_contents("https://cloud.ord.to/api/v1/orders?apiKey=$api_key&page=1");
             $orders_list = json_decode($json_orders_list, true);
+
+            $orders_list_page_count = ceil($orders_list[count] / $orders_list[limit]);
 
             $json_order_type = file_get_contents('https://cloud.ord.to/api/v1/order/type?apiKey=' . $api_key);
             $order_type = json_decode($json_order_type, true);
@@ -32,90 +34,162 @@ function ordto_orders_view()
                 8 => "Card n delivery",
                 9 => "P24",
                 10 => "Status square"];
+
             if (empty($_POST['order_id']) || !empty($_POST['come_back_to_orders'])) {
                 ?>
-                <h2>Orders on your site:</h2>
-                <table>
-                    <tr>
-                        <th>No</th>
-                        <th>Delivery date</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                        <th>Type</th>
-                        <th>Payment status</th>
-                    </tr>
-                    <?php
 
-                    for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
+                <div>
+                    <div style="position: absolute; bottom: 37px; left: 150px">
+                        <form method="post">
+                            <?php echo $orders_list[count] ?> items
+                            <input type="submit" name="the_first_page" value="«">
+                            <input type="submit" name="previous_page" value="‹">
+                            <input style="text-align: center;" type="text" size="1" name="new_page_value" value="<?php
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                if (file_get_contents(__DIR__ . '/pagination/page_num_ords.txt') == $_POST['new_page_value']) {
+                                    if (!empty($_POST['next_page'])) {
+                                        if ($_POST['new_page_value'] < $orders_list_page_count) {
+                                            ordto_save_new_page_orders((int)($_POST['new_page_value'] + 1));
 
-                        $json_order_info = file_get_contents('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '?apiKey=' . $api_key);
-                        $order_info = json_decode($json_order_info, true);
+                                        } else {
+                                            ordto_save_new_page_orders($orders_list_page_count);
 
-                        ?>
-                        <tr>
-                            <td width="80">
-                                <form method="post"><input class="order_number" type="submit" name="order_id"
-                                                           value="<?php echo "#" . $order_info[data][number]; ?>">
-                                </form>
-                            </td>
-                            <td width="230"><?php $date = $orders_list[data][$i][order_date];
-                                echo date("F j, Y, g:i a", strtotime($date)); ?></td>
-                            <td width="100"> <?php echo $orders_list[data][$i][price] . " " . $orders_list[data][$i][currency][name]; ?></td>
-                            <td width="100"><select name="sel<?php echo $i; ?>" form="order_status_change">
-                                    <option <?php if ($as_status[1] == $as_status[$orders_list[data][$i][status]]) {
-                                        ?>
-                                        selected
-                                        <?php
-                                    } ?> ><?php echo $as_status[1]; ?></option>
-                                    <option <?php if ($as_status[4] == $as_status[$orders_list[data][$i][status]]) {
-                                        ?>
-                                        selected
-                                        <?php
-                                    } ?> ><?php echo $as_status[4]; ?></option>
-                                    <option <?php if ($as_status[5] == $as_status[$orders_list[data][$i][status]]) {
-                                        ?>
-                                        selected
-                                        <?php
-                                    } ?> ><?php echo $as_status[5]; ?></option>
-                                    <option <?php if ($as_status[6] == $as_status[$orders_list[data][$i][status]]) {
-                                        ?>
-                                        selected
-                                        <?php
-                                    } ?> ><?php echo $as_status[6]; ?></option>
-                                    <option <?php if ($as_status[7] == $as_status[$orders_list[data][$i][status]]) {
-                                        ?>
-                                        selected
-                                        <?php
-                                    } ?> ><?php echo $as_status[7]; ?></option>
-                                    <option <?php if ($as_status[8] == $as_status[$orders_list[data][$i][status]]) {
-                                        ?>
-                                        selected
-                                        <?php
-                                    } ?> ><?php echo $as_status[8]; ?></option>
-                                    <option <?php if ($as_status[9] == $as_status[$orders_list[data][$i][status]]) {
-                                        ?>
-                                        selected
-                                        <?php
-                                    } ?> ><?php echo $as_status[9]; ?></option>
-                                </select></td>
-                            <td width="100"><?php for ($j = 0; $j <= count($order_type[data]); $j++) {
-                                    if ($order_type[data][$j][id] == $order_info[data][type]) {
-                                        echo $order_type[data][$j][name];
+                                        }
+                                    } elseif (!empty($_POST['previous_page'])) {
+                                        if ($_POST['new_page_value'] > 1) {
+                                            ordto_save_new_page_orders((int)($_POST['new_page_value'] - 1));
+
+                                        } else {
+                                            ordto_save_new_page_orders(1);
+
+                                        }
+                                    } elseif (!empty($_POST['the_first_page'])) {
+                                        ordto_save_new_page_orders(1);
+
+                                    } elseif (!empty($_POST['the_last_page'])) {
+                                        ordto_save_new_page_orders($orders_list_page_count);
+
                                     }
-                                } ?></td>
-                            <td width="200"><?php echo $as_payment_status[$order_info[data][payment_status]]; ?></td>
+                                } elseif (!empty($_POST['new_page_value'])) {
+                                    if ($_POST['new_page_value'] >= 1 && $_POST['new_page_value'] <= $orders_list_page_count) {
+                                        ordto_save_new_page_orders((int)$_POST['new_page_value']);
+
+                                    } elseif ($_POST['new_page_value'] < 1) {
+                                        ordto_save_new_page_orders(1);
+
+                                    } elseif ($_POST['new_page_value'] > $orders_list_page_count) {
+                                        ordto_save_new_page_orders($orders_list_page_count);
+
+                                    }
+                                } else {
+                                    ordto_save_new_page_orders(file_get_contents(__DIR__ . '/pagination/page_num_ords.txt'));
+
+                                }
+                            } else {
+                                ordto_save_new_page_orders(1);
+
+                            } ?>">
+                            <span>of <?php echo $orders_list_page_count; ?></span>
+                            <input type="submit" name="next_page" value="›">
+                            <input type="submit" name="the_last_page" value="»">
+                        </form>
+                    </div>
+
+                    <h2>Orders on your site:</h2>
+                    <table>
+                        <tr>
+                            <th>No</th>
+                            <th>Delivery date</th>
+                            <th>Value</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Payment status</th>
                         </tr>
                         <?php
-                    }
-                    ?>
-                </table>
-                <br>
-                <form id="order_status_change" method="post">
-                    <input type="submit" name="save_order_status" value="Save changes">
-                </form>
+                        $p = file_get_contents(__DIR__ . '/pagination/page_num_ords.txt');
+
+                        $json_orders_list = file_get_contents("https://cloud.ord.to/api/v1/orders?apiKey=$api_key&page=$p");
+                        $orders_list = json_decode($json_orders_list, true);
+
+                        for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
+
+                            $json_order_info = file_get_contents('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '?apiKey=' . $api_key);
+                            $order_info = json_decode($json_order_info, true);
+                            ?>
+                            <div>
+                                <tr>
+                                    <td width="80">
+                                        <form method="post"><input class="order_number" type="submit" name="order_id"
+                                                                   value="<?php echo "#" . $order_info[data][number]; ?>">
+                                        </form>
+                                    </td>
+                                    <td width="230"><?php $date = $orders_list[data][$i][order_date];
+                                        echo date("F j, Y, g:i a", strtotime($date)); ?></td>
+                                    <td width="100"> <?php echo $orders_list[data][$i][price] . " " . $orders_list[data][$i][currency][name]; ?></td>
+                                    <td width="100"><select name="sel<?php echo $i; ?>" form="order_status_change">
+                                            <option <?php if ($as_status[1] == $as_status[$orders_list[data][$i][status]]) {
+                                                ?>
+                                                selected
+                                                <?php
+                                            } ?> ><?php echo $as_status[1]; ?></option>
+                                            <option <?php if ($as_status[4] == $as_status[$orders_list[data][$i][status]]) {
+                                                ?>
+                                                selected
+                                                <?php
+                                            } ?> ><?php echo $as_status[4]; ?></option>
+                                            <option <?php if ($as_status[5] == $as_status[$orders_list[data][$i][status]]) {
+                                                ?>
+                                                selected
+                                                <?php
+                                            } ?> ><?php echo $as_status[5]; ?></option>
+                                            <option <?php if ($as_status[6] == $as_status[$orders_list[data][$i][status]]) {
+                                                ?>
+                                                selected
+                                                <?php
+                                            } ?> ><?php echo $as_status[6]; ?></option>
+                                            <option <?php if ($as_status[7] == $as_status[$orders_list[data][$i][status]]) {
+                                                ?>
+                                                selected
+                                                <?php
+                                            } ?> ><?php echo $as_status[7]; ?></option>
+                                            <option <?php if ($as_status[8] == $as_status[$orders_list[data][$i][status]]) {
+                                                ?>
+                                                selected
+                                                <?php
+                                            } ?> ><?php echo $as_status[8]; ?></option>
+                                            <option <?php if ($as_status[9] == $as_status[$orders_list[data][$i][status]]) {
+                                                ?>
+                                                selected
+                                                <?php
+                                            } ?> ><?php echo $as_status[9]; ?></option>
+                                        </select></td>
+                                    <td width="100"><?php for ($j = 0; $j <= count($order_type[data]); $j++) {
+                                            if ($order_type[data][$j][id] == $order_info[data][type]) {
+                                                echo $order_type[data][$j][name];
+                                            }
+                                        } ?></td>
+                                    <td width="200"><?php echo $as_payment_status[$order_info[data][payment_status]]; ?></td>
+                                </tr>
+                            </div>
+                            <?php
+                        }
+                        ?>
+                    </table>
+                    <br>
+                    <div style="position: absolute; bottom: 40px;">
+                        <form id="order_status_change" method="post">
+                            <input type="submit" name="save_order_status" value="Save changes">
+                        </form>
+                    </div>
+                </div>
                 <?php
             } elseif (!empty($_POST['order_id'])) {
-                for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
+                $p = file_get_contents(__DIR__ . '/pagination/page_num_ords.txt');
+
+                $json_orders_list = file_get_contents("https://cloud.ord.to/api/v1/orders?apiKey=$api_key&page=$p");
+                $orders_list = json_decode($json_orders_list, true);
+
+                for ($i = 0; $i < count($orders_list[data]); ++$i) {
                     $json_order_info = file_get_contents('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '?apiKey=' . $api_key);
                     $order_info = json_decode($json_order_info, true);
 
@@ -200,7 +274,7 @@ function ordto_orders_view()
             }
         } else {
             ?>
-            <div id="new_user_banner"
+            <div class="new_user_banner"
                  style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
                 Specify your API key in the Configuration tab!
             </div>
@@ -208,12 +282,20 @@ function ordto_orders_view()
         }
     } else {
         ?>
-        <div id="new_user_banner"
+        <div class="new_user_banner"
              style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
             Specify your API key in the Configuration tab!
         </div>
         <?php
     }
+}
+
+function ordto_save_new_page_orders($page_num)
+{
+    $new_page_num = fopen(__DIR__ . '/pagination/page_num_ords.txt', 'w');
+    fwrite($new_page_num, $page_num);
+    fclose($new_page_num);
+    echo file_get_contents(__DIR__ . '/pagination/page_num_ords.txt');
 }
 
 function ordto_save_order_status()
@@ -222,7 +304,8 @@ function ordto_save_order_status()
         if (!empty($_POST['save_order_status'])) {
 
             $api_key = file_get_contents(__DIR__ . '/api_key.txt');
-            $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
+            $p = file_get_contents(__DIR__ . '/pagination/page_num_ords.txt');
+            $json_orders_list = file_get_contents("https://cloud.ord.to/api/v1/orders?apiKey=$api_key&page=$p");
             $orders_list = json_decode($json_orders_list, true);
 
             $as_status_convert = ["New" => 1,
@@ -251,32 +334,6 @@ function ordto_save_order_status()
 
         }
     }
-}
-
-function ordto_order_info_arr()
-{
-    $api_key = file_get_contents(__DIR__ . '/api_key.txt');
-    $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
-    $orders_list = json_decode($json_orders_list, true);
-
-    for ($i = 0; $i <= count($orders_list[data]) - 1; ++$i) {
-        $json_order_info = file_get_contents('https://cloud.ord.to/api/v1/order/' . $orders_list[data][$i][id] . '?apiKey=' . $api_key);
-        $order_info = json_decode($json_order_info, true);
-        echo "<pre>";
-        print_r($order_info);
-        echo "</pre>";
-    }
-}
-
-function ordto_orders_list_arr()
-{
-    $api_key = file_get_contents(__DIR__ . '/api_key.txt');
-    $json_orders_list = file_get_contents('https://cloud.ord.to/api/v1/orders?apiKey=' . $api_key . '&page=1');
-    $orders_list = json_decode($json_orders_list, true);
-
-    echo "<pre>";
-    print_r($orders_list);
-    echo "</pre>";
 }
 
 ?>

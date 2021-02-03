@@ -270,7 +270,7 @@ function ordto_product_data_submit($limit)
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                             'Content-Type: application/json',
-                            'Content-Length: ' . $json_new_product_status)
+                            'Content-Length: ' . strlen($json_new_product_status))
                     );
                     curl_exec($ch);
                 }

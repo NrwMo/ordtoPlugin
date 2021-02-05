@@ -4,7 +4,7 @@ function ordto_config_view()
     ordto_post_config();
     if(!file_exists(__DIR__ . '/api_key.txt')){
         ?>
-        <div class="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
+        <div class="banner attention-banner">
             If you do not have an account at ord.to,
             then you can create one
             <a href="https://cloud.ord.to/register" target="_blank">here</a>
@@ -12,10 +12,10 @@ function ordto_config_view()
         <?php
     }
     ?>
-    <div class="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #566d86; background-color: #deedf5; border-color: #d2e5ef;'>
+    <div class="banner info-banner">
         Here you can change all your configuration settings at one time,
         change your API key only,
-        change your site configuration only (widget script and site URL),
+        change your site URL only,
         change view mode only (widget/menu)
     </div>
     <form method='post'>
@@ -26,14 +26,6 @@ function ordto_config_view()
             <?php if (file_exists(__DIR__ . '/api_key.txt')){
             ?> value="<?php echo file_get_contents(__DIR__ . '/api_key.txt') ?>" <?php
                }else { ?>placeholder="API key" <?php } ?>autofocus>
-        <br>
-        <label for="inp_widget">
-            <p> Input your widget script from ord.to -> Settings -> Widget:</p>
-        </label>
-        <input type="text" id="inp_widget" name='widget_code' size="40"
-            <?php if (file_exists(__DIR__ . '/widget_code.php')) {
-                ?> value='<?php echo(file_get_contents(__DIR__ . '/widget_code.php')); ?>' <?php
-            } else { ?>placeholder="Widget script"<?php } ?> >
         <br>
         <label for="site_url">
             <p> Input your site URL from ord.to -> Go to your page:</p>
@@ -59,8 +51,8 @@ function ordto_config_view()
             } ?> > <label for="widget"> Widget</label>
         <br>
         <br>
-        <input type='reset' name='res1' value="Reset">
-        <input type='submit' name='sub1' value="Submit">
+        <input class="but reset-but" type='reset' name='res1' value="Reset">
+        <input class='but save-but' type='submit' name='sub1' value="Save">
     </form>
     <?php
 }
@@ -69,29 +61,41 @@ function ordto_post_config()
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if (!empty($_POST['api_key']) && !empty($_POST['widget_code']) && !empty($_POST['url_site'])) {
+        if (!empty($_POST['api_key']) && !empty($_POST['url_site']) && !empty($_POST['menu/widget'])) {
 
             file_put_contents(__DIR__ . '/api_key.txt', stripslashes($_POST['api_key']));
-            file_put_contents(__DIR__ . '/widget_code.php', stripslashes($_POST['widget_code']));
             file_put_contents(__DIR__ . '/url_site.txt', stripslashes($_POST['url_site']));
             file_put_contents(__DIR__ . '/wm.txt', stripslashes($_POST['menu/widget']));
+
             echo "<h3>All configuration added successfully!</h3>";
 
-        } elseif (empty($_POST['api_key']) && !empty($_POST['widget_code']) && !empty($_POST['url_site'])) {
+        } elseif (empty($_POST['api_key']) && !empty($_POST['url_site']) && !empty($_POST['menu/widget'])) {
 
-            file_put_contents(__DIR__ . '/widget_code.php', stripslashes($_POST['widget_code']));
             file_put_contents(__DIR__ . '/url_site.txt', stripslashes($_POST['url_site']));
-            echo "<h3>Widget script and the site URL changed successfully!</h3>";
+            file_put_contents(__DIR__ . '/wm.txt', stripslashes($_POST['menu/widget']));
 
-        } elseif (!empty($_POST['api_key']) && empty($_POST['widget_code']) && empty($_POST['url_site'])) {
+            echo "<h3>Site URL added successfully!</h3>";
+
+        } elseif (!empty($_POST['api_key']) && empty($_POST['url_site']) && empty($_POST['menu/widget'])) {
 
             file_put_contents(__DIR__ . '/api_key.txt', stripslashes($_POST['api_key']));
-            echo "<h3>API key changed successfully!</h3>";
+            echo "<h3>API key added successfully!</h3>";
 
         } else {
 
             file_put_contents(__DIR__ . '/wm.txt', stripslashes($_POST['menu/widget']));
             echo "<h3>View mode changed successfully!</h3>";
+
+        }
+        if(file_exists(__DIR__ . '/url_site.txt')){
+
+            $url = fopen(__DIR__ . '/url_site.txt', 'r');
+            $new_url = fread($url, strlen(file_get_contents(__DIR__ . '/url_site.txt'))-1);
+            fclose($url);
+
+            $new_widget = fopen(__DIR__ . '/widget_code.php', 'w');
+            fwrite($new_widget, "<script type=\"text/javascript\" src=\"" . $new_url ."/widget/widget.min.js\"></script><div id=\"miniorders-widget-wrapper\" style=\"display: none;\"><div data-miniorders-widget-url=\"" . $new_url . "\" onclick=\"event.preventDefault(); miniordersStartWidget();\" id=\"miniorders-widget-tab\"><a id=\"miniorders-widget-tab-name\" href=\"#\"></a></div><iframe id=\"miniorders-iframe\" width=\"0\" height=\"0\"></iframe><div id=\"miniorders-widget-close\" onclick=\"event.preventDefault(); miniordersStartWidget();\"><div id=\"miniorders-widget-close-img\"></div></div></div>");
+            fclose($new_widget);
 
         }
     }

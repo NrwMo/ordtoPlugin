@@ -5,6 +5,8 @@ function ordto_products_view()
     if (file_exists(__DIR__ . '/api_key.txt')) {
         if (!empty(file_get_contents(__DIR__ . '/api_key.txt'))) {
 
+
+
             $limit = 20;
 
             ordto_product_data_submit($limit);
@@ -31,7 +33,7 @@ function ordto_products_view()
             if (empty($_POST['add_new_product']) || !empty($_POST['come_back_to_products_list'])) {
                 ?>
                 <div>
-                    <div class="new_user_banner" style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #566d86; background-color: #deedf5; border-color: #d2e5ef;'>
+                    <div class="banner info-banner">
                         Here you can view information about your products,
                         change their sale statuses and add new ones
                     </div>
@@ -104,23 +106,11 @@ function ordto_products_view()
 
                     <h2>Products on your site:</h2>
                     <form method="post">
-                        <input style="display: inline-block;
-                            background-color: #1ab394;
-    border-color: #1ab394;
-    color: #FFFFFF;
-    padding: 6px 12px;
-    font-size: 14px;
-    font-weight: 400;
-    text-align: center;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 4px;" class="btn" type="submit" name="add_new_product" value="Add product">
+                        <input class="but add-but" type="submit" name="add_new_product" value="Add product">
                     </form>
                     <br>
                     <table>
-                        <tr style="text-align: left;">
+                        <tr>
                             <th>ON</th>
                             <th>Name</th>
                             <th>Price</th>
@@ -150,7 +140,7 @@ function ordto_products_view()
                     <br>
                     <div style="position: absolute; bottom: 40px;">
                         <form id="status_change" method="post">
-                            <input type="submit" name="save_changes_in_products" value="Save changes">
+                            <input class="but save-but" type="submit" name="save_changes_in_products" value="Save">
                         </form>
                     </div>
                 </div>
@@ -161,16 +151,14 @@ function ordto_products_view()
             }
         } else {
             ?>
-            <div class="new_user_banner"
-                 style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
+            <div class="banner attention-banner">
                 Specify your API key in the Configuration tab!
             </div>
             <?php
         }
     } else {
         ?>
-        <div class="new_user_banner"
-             style='padding: 15px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #765c3c; background-color: #f0e8d8; border-color: #e9dfc6;'>
+        <div class="banner attention-banner">
             Specify your API key in the Configuration tab!
         </div>
         <?php
@@ -209,20 +197,8 @@ function ordto_add_product()
         <label for="product_photo"><h3>Product photo</h3></label>
         <input class="input_prod" type="file" name="product_photo[]" multiple accept="image/*"><br><br>
 
-        <input type='reset' name='res2' value="Reset">
-        <input style="display: inline-block;
-                            background-color: #1ab394;
-    border-color: #1ab394;
-    color: #FFFFFF;
-    padding: 6px 12px;
-    font-size: 14px;
-    font-weight: 400;
-    text-align: center;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 4px;" type='submit' name='sub2' value="Add product"><br><br>
+        <input class="but reset-but" type='reset' name='res2' value="Reset">
+        <input class="but add-but" type='submit' name='sub2' value="Add"><br><br>
     </form>
     <?php
 }

@@ -22,12 +22,12 @@ require_once __DIR__ . '/includes/menu_or_widget.php';
 
 function ortdo_register_assets()
 {
-    wp_register_style('ordto_style', plugins_url('admin/css/main.css', __FILE__));
+    wp_register_style('ordto_style', plugins_url('admin/css/style.css', __FILE__));
 }
 
 function ordto_enqueue_assets($hook)
 {
-    if ($hook != ('toplevel_page_orders' || 'toplevel_page_products')) {
+    if ($hook != ('toplevel_page_orders' || 'toplevel_page_products' || 'toplevel_page_config')) {
         return;
     }
     wp_enqueue_style('ordto_style');

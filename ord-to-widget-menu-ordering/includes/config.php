@@ -2,7 +2,7 @@
 function ordto_config_view()
 {
     ordto_post_config();
-    if(!file_exists(__DIR__ . '/api_key.txt')){
+    if (!file_exists(__DIR__ . '/api_key.txt')) {
         ?>
         <div class="banner attention-banner">
             If you do not have an account at ord.to,
@@ -85,17 +85,6 @@ function ordto_post_config()
 
             file_put_contents(__DIR__ . '/wm.txt', stripslashes($_POST['menu/widget']));
             echo "<h3>View mode changed successfully!</h3>";
-
-        }
-        if(file_exists(__DIR__ . '/url_site.txt')){
-
-            $url = fopen(__DIR__ . '/url_site.txt', 'r');
-            $new_url = fread($url, strlen(file_get_contents(__DIR__ . '/url_site.txt'))-1);
-            fclose($url);
-
-            $new_widget = fopen(__DIR__ . '/widget_code.php', 'w');
-            fwrite($new_widget, "<script type=\"text/javascript\" src=\"" . $new_url ."/widget/widget.min.js\"></script><div id=\"miniorders-widget-wrapper\" style=\"display: none;\"><div data-miniorders-widget-url=\"" . $new_url . "\" onclick=\"event.preventDefault(); miniordersStartWidget();\" id=\"miniorders-widget-tab\"><a id=\"miniorders-widget-tab-name\" href=\"#\"></a></div><iframe id=\"miniorders-iframe\" width=\"0\" height=\"0\"></iframe><div id=\"miniorders-widget-close\" onclick=\"event.preventDefault(); miniordersStartWidget();\"><div id=\"miniorders-widget-close-img\"></div></div></div>");
-            fclose($new_widget);
 
         }
     }

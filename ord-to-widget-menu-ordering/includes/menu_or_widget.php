@@ -2,8 +2,24 @@
 
 function ordto_add_widget()
 {
-    $widget = file_get_contents(__DIR__ . '/widget_code.php');
-    echo $widget;
+    $url = fopen(__DIR__ . '/url_site.txt', 'r');
+    $new_url = fread($url, strlen(file_get_contents(__DIR__ . '/url_site.txt')) - 1);
+    fclose($url);
+
+    ?>
+    <script type="text/javascript" src="<?php echo $new_url; ?>/widget/widget.min.js"></script>
+    <div id="miniorders-widget-wrapper" style="display: none;">
+        <div data-miniorders-widget-url="<?php echo $new_url; ?>" onclick="event.preventDefault();
+         miniordersStartWidget();" id="miniorders-widget-tab">
+            <a id="miniorders-widget-tab-name" href="#"></a>
+        </div>
+        <iframe id="miniorders-iframe" width="0" height="0"></iframe>
+        <div id="miniorders-widget-close" onclick="event.preventDefault(); miniordersStartWidget();">
+            <div id="miniorders-widget-close-img"></div>
+        </div>
+    </div>
+    <?php
+
 }
 
 function add_js_script_button()
@@ -71,7 +87,7 @@ function ordto_view_public()
 
         $mode = file_get_contents(__DIR__ . '/wm.txt');
 
-        if ($mode === 'widget' && file_exists(__DIR__ . '/widget_code.php')) {
+        if ($mode === 'widget' && file_exists(__DIR__ . '/url_site.txt')) {
 
             add_action('wp_footer', 'ordto_add_widget');
 
